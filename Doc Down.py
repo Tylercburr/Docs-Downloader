@@ -2,7 +2,7 @@ from googleapiclient.discovery import build
 from googleapiclient.http import MediaIoBaseDownload
 from google_auth_oauthlib.flow import InstalledAppFlow
 from google.auth.transport.requests import Request
-from PIL import Image
+from PIL import Image, ImageFile
 import pickle
 import os
 import io
@@ -11,6 +11,7 @@ import requests
 import PySimpleGUI as sg
 
 sg.theme('SandyBeach')
+ImageFile.LOAD_TRUNCATED_IMAGES = True
 
 layout = [
     [sg.Text('Please enter the save path and the file_id')],
@@ -24,6 +25,10 @@ event, values = window.read()
 window.close()
 
 save_path = values[0]
+
+# Create the directory if it doesn't exist
+if not os.path.exists('Keeps/' + save_path):
+    os.makedirs('Keeps/' + save_path)
 
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
