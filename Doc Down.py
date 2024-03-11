@@ -168,24 +168,26 @@ if __name__ == '__main__':
     image_counter = 1
     image_paths = []
     for img in soup.find_all('img'):
-        img_url = img['src']
-        img_data = requests.get(img_url).content
-        img_name = "Image" + str(image_counter)
-        image_counter += 1
+        if 'src' in img.attrs:
+         img_url = img['src']
+         img_data = requests.get(img_url).content
+         img_name = "Image" + str(image_counter)
+         image_counter += 1
 
-        img_object = Image.open(io.BytesIO(img_data))
-        img_path = os.path.join('Keeps/' + save_path + '/', img_name + '.' + img_object.format)
-        print(f"Saving image: {img_path}")
-        img_object.save(img_path)
+         img_object = Image.open(io.BytesIO(img_data))
+         img_path = os.path.join('Keeps/' + save_path + '/', img_name + '.' + img_object.format)
+         print(f"Saving image: {img_path}")
+         img_object.save(img_path)
 
-        image_paths.append(img_path)
+         image_paths.append(img_path)
 
-        # Batch upload the images every 50 images
-        if len(image_paths) >= 50:
+         # Batch upload the images every 50 images
+         if len(image_paths) >= 50:
             batch_upload_images(photos_service, album_id, image_paths)
             image_paths = []
-    
+
+        else:
+            print(f"Image tag without 'src' atribute found: {img}")
+            
     if image_paths:
         batch_upload_images(photos_service, album_id, image_paths)
-
-
